@@ -22,7 +22,7 @@ function draw(){
 function drawBoxs(){
     for(let i = 0; i<numBoxs; i++){
         let totalSpacing = rectWidth + spacing;
-        rect(i*totalSpacing + rectX, rectY, rectWidth, rectHeight);
+        rect(i*totalSpacing + rectX, rectY, rectWidth, rectHeight); 
     }
 }
 
