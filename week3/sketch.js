@@ -1,40 +1,122 @@
-let distance =  23;
-let rectX = 20;
-let rectY =20;
-let rectWidth =50;
-let rectHeight =50;
-let numBoxs = 5;
-let spacing = 5;
+let chartWidth = 300;
+let chartHeight = 300;
 
-clap(69,420);
 
-function setup(){
+let data= [
+{name:"Oranges",total:63},
+{name:"Bananas",total:33},
+{name:"Pears",total:21},
+{name:"Apples",total:43}
+];
+
+let listValues = data.map(function (x){return x.total})
+
+let scaledData = [];
+let spacing = 10;
+let margin = 20;
+let numTicks = 10;
+let posX = 100;
+let posY = 350;
+let tickIncrements;
+let maxValue;
+let numPlaces=2;
+let colors;
+let showValues = true;
+let showLabels = true;
+let rotateLabels = true;
+
+let tickSpacing = chartHeight / numTicks; //space between ticks on  the left 
+let availableWidth = chartWidth - (margin * 2) - (spacing * (data.length - 1)); //available space for bars
+let barWidth = availableWidth / data.length; //bar width
+
+function setup() {
     createCanvas(500,500);
     background(0);
-}
+    colors=[
+        color('#ffe066'),
+        color('#fab666'),
+        color('#f68f6a'),
+        color('#f3646a')
+    ]
+    maxValue = max(listValues);
+    tickIncrements = maxValue / numTicks;
 
-function draw(){
-    fill(255,140,0);
-    noStroke();
-    drawBoxs();
-}
-
-function drawBoxs(){
-    for(let i = 0; i<numBoxs; i++){
-        let totalSpacing = rectWidth + spacing;
-        rect(i*totalSpacing + rectX, rectY, rectWidth, rectHeight); 
+    for(let i=0; i<data.length; i++){
+        let tempVal = map(data[i].total, 0, maxValue, 0, chartHeight);
+        scaledData.push(tempVal);
     }
 }
 
-function clap(startnum, endnum){
-    let loopCount = endnum - startnum;
-    for(let i=0; i<=loopCount; i++){
-    console.log("hi again" + ( startnum+i))
-    }
-}
+function draw() {
+    background(0);
+    
 
-function addMeUp(num01,num02){
-    let total = num01 + num02;
-    console.log("job done");
-    return total;
+    translate(posX, posY);
+    stroke(255, 180);
+    strokeWeight(2);
+    //y axis
+    line(0, 0, 0, -chartHeight); 
+    //x axis
+    line(0, 0, chartWidth, 0);
+
+    for(let i=0; i<=numTicks; i++){
+        //ticks
+        stroke(255,100);
+        strokeWeight(1);
+        line(0, tickSpacing * -i, -10, tickSpacing * -i);
+
+        //ticks
+        stroke(255);
+        strokeWeight(1);
+        line(0, tickSpacing * -i,chartWidth, tickSpacing * -i);
+
+        //numbers (text)
+        fill(255);
+        noStroke();
+        textSize(16);
+        textAlign(RIGHT, CENTER);
+        text((i * tickIncrements).toFixed(numPlaces), -15, tickSpacing * -i);
+    }
+
+    translate(margin, 0);
+    for(let i=0; i<scaledData.length; i++){
+        let colorNumber = i % 4;
+
+        //bars
+        fill(colors[colorNumber]);
+        noStroke();
+        rect((barWidth + spacing) * i, 0, barWidth, -scaledData[i]);
+
+        //numbers (text)
+        if(showValues){
+            noStroke();
+            fill(255);
+            textSize(16);
+            textAlign(CENTER, BOTTOM);
+            text(data[i].total, ((barWidth + spacing) * i) + barWidth / 2, -scaledData[i]);
+        }
+        
+
+        //text
+        if(showLabels){
+            if(rotateLabels){
+                push()
+                noStroke();
+            fill(255);
+            textSize(14);
+            textAlign(LEFT, CENTER);
+            translate( ((barWidth + spacing) * i) + barWidth / 2, 5)
+            rotate(PI/2)
+            text(data[i].name, 0,0);
+            pop()
+            }else{
+            noStroke();
+            fill(255);
+            textSize(14);
+            textAlign(CENTER, BOTTOM);
+            text(data[i].name, ((barWidth + spacing) * i) + barWidth / 2, 20);
+        }
+        }
+        
+    }
 }
